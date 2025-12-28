@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIGrusLand - Новое поколение мессенджера</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2d8cff;
+            --secondary-color: #1c6bc8;
+            --dark-color: #1a1a2e;
+            --light-color: #f8f9fa;
+            --gray-color: #e9ecef;
+            --dark-gray: #6c757d;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --border-radius: 12px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+            max-width: 1600px;
+            margin: 0 auto;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Стили для боковой панели */
+        .sidebar {
+            width: 30%;
+            min-width: 300px;
+            background-color: white;
+            border-right: 1px solid var(--gray-color);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .logo i {
+            font-size: 28px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: white;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .search-container {
+            padding: 15px;
+            background-color: white;
+            border-bottom: 1px solid var(--gray-color);
+        }
+
+        .search-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            color: var(--dark-gray);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border: 1px solid var(--gray-color);
+            border-radius: var(--border-radius);
+            font-size: 15px;
+            background-color: var(--gray-color);
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            background-color: white;
+            border-color: var(--primary-color);
+        }
+
+        .chat-types {
+            display: flex;
+            padding: 0 15px;
+            background-color: white;
+            border-bottom: 1px solid var(--gray-color);
+        }
+
+        .chat-type-btn {
+            flex: 1;
+            padding: 15px 10px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-weight: 600;
+            color: var(--dark-gray);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .chat-type-btn.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .chat-type-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .chat-list {
+            flex: 1;
+            overflow-y: auto;
+            background-color: white;
+        }
+
+        .chat-item {
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid var(--gray-color);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .chat-item:hover {
+            background-color: var(--gray-color);
+        }
+
+        .chat-item.active {
+            background-color: rgba(45, 140, 255, 0.1);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .chat-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 18px;
+        }
+
+        .chat-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .chat-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .last-message {
+            font-size: 14px;
+            color: var(--dark-gray);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .chat-meta {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 5px;
+        }
+
+        .chat-time {
+            font-size: 12px;
+            color: var(--dark-gray);
+        }
+
+        .unread-count {
+            background-color: var(--primary-color);
+            color: white;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* Стили для основной области чата */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #f0f2f5;
+        }
+
+        .chat-header {
+            padding: 20px;
+            background-color: white;
+            border-bottom: 1px solid var(--gray-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-header-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .chat-header-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 20px;
+        }
+
+        .chat-header-name {
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .chat-header-status {
+            font-size: 14px;
+            color: var(--dark-gray);
+        }
+
+        .chat-header-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .chat-header-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background-color: var(--gray-color);
+            color: #333;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .chat-header-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .messages-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            display: flex;
+            max-width: 70%;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.incoming {
+            align-self: flex-start;
+        }
+
+        .message.outgoing {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .message-content {
+            margin: 0 10px;
+            padding: 12px 15px;
+            border-radius: 18px;
+            background-color: white;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .message.outgoing .message-content {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .message-text {
+            word-wrap: break-word;
+        }
+
+        .message-media {
+            margin-top: 10px;
+            border-radius: 10px;
+            overflow: hidden;
+            max-width: 250px;
+        }
+
+        .message-media img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .message-time {
+            font-size: 12px;
+            text-align: right;
+            margin-top: 5px;
+            opacity: 0.8;
+        }
+
+        .message-input-container {
+            padding: 20px;
+            background-color: white;
+            border-top: 1px solid var(--gray-color);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 1px solid var(--gray-color);
+            border-radius: 30px;
+            font-size: 15px;
+            transition: var(--transition);
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .media-btn, .send-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background-color: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: var(--transition);
+        }
+
+        .media-btn {
+            background-color: var(--gray-color);
+            color: #333;
+        }
+
+        .media-btn:hover {
+            background-color: var(--dark-gray);
+            color: white;
+        }
+
+        .send-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        /* Стили для модальных окон */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+            padding: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--gray-color);
+            border-radius: var(--border-radius);
+            font-size: 15px;
+            transition: var(--transition);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 16px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-secondary {
+            background-color: var(--gray-color);
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background-color: #d1d5db;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .user-search-result {
+            border: 1px solid var(--gray-color);
+            border-radius: var(--border-radius);
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+
+        .user-result-item {
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--gray-color);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .user-result-item:hover {
+            background-color: var(--gray-color);
+        }
+
+        .user-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .group-members {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .member-tag {
+            background-color: var(--gray-color);
+            padding: 8px 12px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .member-tag i {
+            cursor: pointer;
+            color: var(--dark-gray);
+        }
+
+        .member-tag i:hover {
+            color: var(--danger-color);
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                min-width: unset;
+                height: 60vh;
+            }
+            
+            .chat-area {
+                height: 40vh;
+            }
+            
+            .message {
+                max-width: 85%;
+            }
+        }
+
+        /* Заглушка для пустого чата */
+        .empty-chat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--dark-gray);
+            text-align: center;
+            padding: 20px;
+        }
+
+        .empty-chat i {
+            font-size: 60px;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .empty-chat h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Боковая панель с чатами -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-comment-dots"></i>
+                    <span>MIGrusLand</span>
+                </div>
+                <div class="user-profile">
+                    <div class="user-avatar">АИ</div>
+                    <span>Алексей Иванов</span>
+                </div>
+            </div>
+            
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" class="search-input" placeholder="Найти пользователя или группу...">
+                </div>
+            </div>
+            
+            <div class="chat-types">
+                <button class="chat-type-btn active">Чаты</button>
+                <button class="chat-type-btn">Группы</button>
+                <button class="chat-type-btn" id="new-chat-btn">+ Новый чат</button>
+                <button class="chat-type-btn" id="new-group-btn">+ Новая группа</button>
+            </div>
+            
+            <div class="chat-list">
+                <div class="chat-item active">
+                    <div class="chat-avatar" style="background-color: #e74c3c;">МП</div>
+                    <div class="chat-info">
+                        <div class="chat-name">Мария Петрова</div>
+                        <div class="last-message">Привет! Как дела?</div>
+                    </div>
+                    <div class="chat-meta">
+                        <div class="chat-time">10:45</div>
+                        <div class="unread-count">2</div>
+                    </div>
+                </div>
+                
+                <div class="chat-item">
+                    <div class="chat-avatar" style="background-color: #2ecc71;">СИ</div>
+                    <div class="chat-info">
+                        <div class="chat-name">Сергей Иванов</div>
+                        <div class="last-message">Отправил фото</div>
+                    </div>
+                    <div class="chat-meta">
+                        <div class="chat-time">09:30</div>
+                    </div>
+                </div>
+                
+                <div class="chat-item">
+                    <div class="chat-avatar" style="background-color: #9b59b6;">ГД</div>
+                    <div class="chat-info">
+                        <div class="chat-name">Группа "Друзья"</div>
+                        <div class="last-message">Анна: Встречаемся в 19:00</div>
+                    </div>
+                    <div class="chat-meta">
+                        <div class="chat-time">Вчера</div>
+                        <div class="unread-count">5</div>
+                    </div>
+                </div>
+                
+                <div class="chat-item">
+                    <div class="chat-avatar" style="background-color: #f39c12;">ЕК</div>
+                    <div class="chat-info">
+                        <div class="chat-name">Екатерина Козлова</div>
+                        <div class="last-message">Отправил голосовое сообщение</div>
+                    </div>
+                    <div class="chat-meta">
+                        <div class="chat-time">Вчера</div>
+                    </div>
+                </div>
+                
+                <div class="chat-item">
+                    <div class="chat-avatar" style="background-color: #1abc9c;">РФ</div>
+                    <div class="chat-info">
+                        <div class="chat-name">Работа</div>
+                        <div class="last-message">Иван: Проект сдан</div>
+                    </div>
+                    <div class="chat-meta">
+                        <div class="chat-time">Пт</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Основная область чата -->
+        <div class="chat-area">
+            <div class="chat-header">
+                <div class="chat-header-info">
+                    <div class="chat-header-avatar" style="background-color: #e74c3c;">МП</div>
+                    <div>
+                        <div class="chat-header-name">Мария Петрова</div>
+                        <div class="chat-header-status">был(а) в сети 5 минут назад</div>
+                    </div>
+                </div>
+                <div class="chat-header-actions">
+                    <button class="chat-header-btn">
+                        <i class="fas fa-phone"></i>
+                    </button>
+                    <button class="chat-header-btn">
+                        <i class="fas fa-video"></i>
+                    </button>
+                    <button class="chat-header-btn">
+                        <i class="fas fa-info-circle"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="messages-container">
+                <div class="message incoming">
+                    <div class="message-avatar" style="background-color: #e74c3c;">МП</div>
+                    <div class="message-content">
+                        <div class="message-text">Привет! Как дела?</div>
+                        <div class="message-time">10:44</div>
+                    </div>
+                </div>
+                
+                <div class="message outgoing">
+                    <div class="message-avatar" style="background-color: #2d8cff;">АИ</div>
+                    <div class="message-content">
+                        <div class="message-text">Привет! Все отлично, только что протестировал новый мессенджер MIGrusLand</div>
+                        <div class="message-time">10:45</div>
+                    </div>
+                </div>
+                
+                <div class="message incoming">
+                    <div class="message-avatar" style="background-color: #e74c3c;">МП</div>
+                    <div class="message-content">
+                        <div class="message-text">Круто! А можно в нем отправлять фото и видео?</div>
+                        <div class="message-time">10:46</div>
+                    </div>
+                </div>
+                
+                <div class="message outgoing">
+                    <div class="message-avatar" style="background-color: #2d8cff;">АИ</div>
+                    <div class="message-content">
+                        <div class="message-text">Конечно! Вот смотри, как работает отправка медиафайлов</div>
+                        <div class="message-media">
+                            <img src="https://images.unsplash.com/photo-1611224923853-80b023f02d71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Пример изображения">
+                        </div>
+                        <div class="message-time">10:47</div>
+                    </div>
+                </div>
+                
+                <div class="message incoming">
+                    <div class="message-avatar" style="background-color: #e74c3c;">МП</div>
+                    <div class="message-content">
+                        <div class="message-text">Выглядит современно! А как добавлять людей в группы?</div>
+                        <div class="message-time">10:48</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="message-input-container">
+                <button class="media-btn">
+                    <i class="fas fa-paperclip"></i>
+                </button>
+                <input type="text" class="message-input" placeholder="Введите сообщение...">
+                <button class="send-btn">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модальное окно создания нового чата -->
+    <div class="modal" id="new-chat-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Новый личный чат</div>
+                <button class="close-btn" id="close-new-chat">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Введите юзернейм пользователя:</label>
+                    <input type="text" class="form-input" id="search-user-input" placeholder="Например: user123">
+                    <div class="user-search-result">
+                        <div class="user-result-item">
+                            <div class="chat-avatar" style="background-color: #3498db; width: 40px; height: 40px;">СИ</div>
+                            <div>
+                                <div class="chat-name">Сергей Иванов</div>
+                                <div class="last-message">@sergey_ivanov</div>
+                            </div>
+                        </div>
+                        <div class="user-result-item">
+                            <div class="chat-avatar" style="background-color: #e74c3c; width: 40px; height: 40px;">МП</div>
+                            <div>
+                                <div class="chat-name">Мария Петрова</div>
+                                <div class="last-message">@maria_petrova</div>
+                            </div>
+                        </div>
+                        <div class="user-result-item">
+                            <div class="chat-avatar" style="background-color: #2ecc71; width: 40px; height: 40px;">ЕК</div>
+                            <div>
+                                <div class="chat-name">Екатерина Козлова</div>
+                                <div class="last-message">@ekaterina_koz</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancel-new-chat">Отмена</button>
+                <button class="btn btn-primary">Создать чат</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модальное окно создания новой группы -->
+    <div class="modal" id="new-group-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Создание новой группы</div>
+                <button class="close-btn" id="close-new-group">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Название группы:</label>
+                    <input type="text" class="form-input" id="group-name-input" placeholder="Введите название группы">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Добавить участников по юзернейму:</label>
+                    <input type="text" class="form-input" id="add-member-input" placeholder="Найти пользователя по юзернейму">
+                    <div class="user-search-result">
+                        <div class="user-result-item">
+                            <div class="chat-avatar" style="background-color: #3498db; width: 40px; height: 40px;">СИ</div>
+                            <div>
+                                <div class="chat-name">Сергей Иванов</div>
+                                <div class="last-message">@sergey_ivanov</div>
+                            </div>
+                            <button class="btn btn-primary" style="padding: 5px 10px; font-size: 14px;">Добавить</button>
+                        </div>
+                        <div class="user-result-item">
+                            <div class="chat-avatar" style="background-color: #e74c3c; width: 40px; height: 40px;">МП</div>
+                            <div>
+                                <div class="chat-name">Мария Петрова</div>
+                                <div class="last-message">@maria_petrova</div>
+                            </div>
+                            <button class="btn btn-primary" style="padding: 5px 10px; font-size: 14px;">Добавить</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Участники группы:</label>
+                    <div class="group-members">
+                        <div class="member-tag">
+                            Вы <i class="fas fa-times"></i>
+                        </div>
+                        <div class="member-tag">
+                            Сергей Иванов <i class="fas fa-times"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancel-new-group">Отмена</button>
+                <button class="btn btn-primary">Создать группу</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Простой JavaScript для работы с модальными окнами
+        document.addEventListener('DOMContentLoaded', function() {
+            const newChatBtn = document.getElementById('new-chat-btn');
+            const newGroupBtn = document.getElementById('new-group-btn');
+            const newChatModal = document.getElementById('new-chat-modal');
+            const newGroupModal = document.getElementById('new-group-modal');
+            const closeNewChat = document.getElementById('close-new-chat');
+            const closeNewGroup = document.getElementById('close-new-group');
+            const cancelNewChat = document.getElementById('cancel-new-chat');
+            const cancelNewGroup = document.getElementById('cancel-new-group');
+            
+            // Открытие модальных окон
+            newChatBtn.addEventListener('click', function() {
+                newChatModal.classList.add('active');
+            });
+            
+            newGroupBtn.addEventListener('click', function() {
+                newGroupModal.classList.add('active');
+            });
+            
+            // Закрытие модальных окон
+            closeNewChat.addEventListener('click', function() {
+                newChatModal.classList.remove('active');
+            });
+            
+            closeNewGroup.addEventListener('click', function() {
+                newGroupModal.classList.remove('active');
+            });
+            
+            cancelNewChat.addEventListener('click', function() {
+                newChatModal.classList.remove('active');
+            });
+            
+            cancelNewGroup.addEventListener('click', function() {
+                newGroupModal.classList.remove('active');
+            });
+            
+            // Закрытие при клике вне модального окна
+            window.addEventListener('click', function(event) {
+                if (event.target === newChatModal) {
+                    newChatModal.classList.remove('active');
+                }
+                if (event.target === newGroupModal) {
+                    newGroupModal.classList.remove('active');
+                }
+            });
+            
+            // Имитация отправки сообщения
+            const sendBtn = document.querySelector('.send-btn');
+            const messageInput = document.querySelector('.message-input');
+            const messagesContainer = document.querySelector('.messages-container');
+            
+            sendBtn.addEventListener('click', function() {
+                const text = messageInput.value.trim();
+                if (text) {
+                    const messageDiv = document.createElement('div');
+                    messageDiv.className = 'message outgoing';
+                    messageDiv.innerHTML = `
+                        <div class="message-avatar" style="background-color: #2d8cff;">АИ</div>
+                        <div class="message-content">
+                            <div class="message-text">${text}</div>
+                            <div class="message-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                        </div>
+                    `;
+                    messagesContainer.appendChild(messageDiv);
+                    messageInput.value = '';
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                    
+                    // Имитация ответа через 1 секунду
+                    setTimeout(function() {
+                        const replyDiv = document.createElement('div');
+                        replyDiv.className = 'message incoming';
+                        replyDiv.innerHTML = `
+                            <div class="message-avatar" style="background-color: #e74c3c;">МП</div>
+                            <div class="message-content">
+                                <div class="message-text">Получил ваше сообщение: "${text}"</div>
+                                <div class="message-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                            </div>
+                        `;
+                        messagesContainer.appendChild(replyDiv);
+                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                    }, 1000);
+                }
+            });
+            
+            // Отправка сообщения по нажатию Enter
+            messageInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendBtn.click();
+                }
+            });
+            
+            // Переключение между вкладками чатов
+            const chatTypeBtns = document.querySelectorAll('.chat-type-btn');
+            chatTypeBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (!this.id) { // Не применяем к кнопкам с ID (новый чат/группа)
+                        chatTypeBtns.forEach(b => b.classList.remove('active'));
+                        this.classList.add('active');
+                    }
+                });
+            });
+            
+            // Выбор чата из списка
+            const chatItems = document.querySelectorAll('.chat-item');
+            chatItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    chatItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Обновление заголовка чата
+                    const chatName = this.querySelector('.chat-name').textContent;
+                    document.querySelector('.chat-header-name').textContent = chatName;
+                });
+            });
+        });
+    </script>
+</body>
+</html>
